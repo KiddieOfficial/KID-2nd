@@ -3,7 +3,6 @@ const store = require('../../../lib/donationStore');
 module.exports = (req, res) => {
   const SECRET = process.env.SECRET;
 
-  // 🔐 VALIDASI
   if (req.headers["x-secret"] !== SECRET) {
     return res.status(403).json({ error: "Unauthorized" });
   }
@@ -11,27 +10,22 @@ module.exports = (req, res) => {
   const universeId = req.query.universeId;
   const b = req.body || {};
 
-  const donor = b.donator_name || b.donor_name || b.name || "Anon";
+  const donor = b.donator_name || b.donor_name || "Anon";
   const amount = Number(b.amount) || 0;
   const message = b.message || "";
 
-  if (!universeId) {
-    return res.status(400).json({ error: "missing universeId" });
+  if (!universeId || amount <= 0) {
+    return res.status(400).json({ error: "Invalid data" });
   }
 
-  if (amount <= 0) {
-    return res.status(400).json({ error: "invalid amount" });
-  }
-
-  console.log("WEBHOOK MASUK:", universeId, donor, amount);
+  console.log("WEBHOOK:", donor, amount);
 
   store.pushDonation({
     universeId,
     donorName: donor,
     amount,
-    message,
-    source: "saweria"
+    message
   });
 
-  return res.json({ ok: true });
+  res.json({ ok: true });
 };
