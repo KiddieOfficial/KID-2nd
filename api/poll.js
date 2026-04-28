@@ -9,7 +9,7 @@ module.exports = (req, res) => {
 
   const data = store.getAndClear(universeId);
 
-  console.log("POLL DIAMBIL:", data.length);
+  console.log("POLL:", data.length);
 
   res.json(data);
 };
